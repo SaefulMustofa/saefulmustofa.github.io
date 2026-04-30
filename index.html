@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You ❤️</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
+    font-family: Arial, sans-serif;
+    background: black;
+    color: white;
+}
+
+/* INTRO */
+#intro {
+    position: fixed;
+    inset: 0;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+#intro button {
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 12px;
+    border: none;
+    background: pink;
+    cursor: pointer;
+}
+
+/* PARTICLES */
+#particles-js {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+}
+
+/* CINEMATIC BACKGROUND */
+.bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(20px) brightness(0.4);
+    transform: scale(1.2);
+    z-index: -1;
+}
+
+/* VIGNETTE */
+.vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 200px rgba(0,0,0,0.8);
+    z-index: 1;
+}
+
+/* STORY */
+.story {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+}
+
+/* SLIDE */
+.slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transform: scale(1.1);
+    transition: 1s;
+    text-align: center;
+    padding: 20px;
+}
+
+.slide.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* FOTO */
+img {
+    width: 80vw;
+    max-width: 280px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 40px pink;
+    animation: zoom 6s ease-in-out infinite alternate;
+}
+
+@keyframes zoom {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
+}
+
+/* TEXT */
+h1 {
+    font-size: clamp(20px, 5vw, 28px);
+}
+
+p {
+    font-size: clamp(14px, 4vw, 20px);
+}
+
+/* PROGRESS */
+.progress {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 5px;
+    display: flex;
+}
+
+.bar {
+    flex: 1;
+    margin: 2px;
+    background: rgba(255,255,255,0.3);
+}
+
+.fill {
+    height: 100%;
+    width: 0%;
+    background: white;
+}
+</style>
+</head>
+<body>
+
+<div id="intro">
+    <button onclick="startExperience()">Buka Hadiah 🎁</button>
+</div>
+
+<div id="particles-js"></div>
+<div class="vignette"></div>
+
+<div class="story">
+
+    <div class="progress" id="progress"></div>
+
+    <div class="slide active">
+        <h1>Hai sayaang ❤️</h1>
+        <p>Aku mau cerita sedikit ...</p>
+    </div>
+
+    <div class="slide" data-bg="/eks/1713153731040.jpg">
+        <div class="bg"></div>
+        <img src="/eks/1713153731040.jpg">
+        <p>Ini momen pertama kita 😊</p>
+    </div>
+
+    <div class="slide" data-bg="foto2.jpg">
+        <div class="bg"></div>
+        <img src="foto2.jpg">
+        <p>Banyak kenangan indah</p>
+    </div>
+
+    <div class="slide">
+        <h1>Happy Birthday 🎂</h1>
+        <p>Semoga kamu selalu bahagia</p>
+    </div>
+
+    <div class="slide">
+        <h1>I love you ❤️</h1>
+    </div>
+
+</div>
+
+<audio id="music" loop preload="auto">
+    <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+
+<script>
+// particles
+particlesJS("particles-js", {
+    particles: {
+        number: { value: 20 },
+        shape: {
+        type: "image",
+        image: {
+            src: "https://cdn-icons-png.flaticon.com/512/616/616490.png",
+            width: 100,
+            height: 100
+        }
+        },
+        size: { value: 10, random: true },
+        move: { speed: 1.2 }
+    }
+});
+
+// slides
+const slides = document.querySelectorAll(".slide");
+const progress = document.getElementById("progress");
+
+let current = 0;
+const duration = 4000;
+
+// progress bar
+slides.forEach((slide) => {
+    const bar = document.createElement("div");
+    bar.classList.add("bar");
+
+    const fill = document.createElement("div");
+    fill.classList.add("fill");
+
+    bar.appendChild(fill);
+    progress.appendChild(bar);
+
+    const bg = slide.querySelector(".bg");
+    if (bg && slide.dataset.bg) {
+        bg.style.backgroundImage = `url(${slide.dataset.bg})`;
+    }
+    });
+
+const fills = document.querySelectorAll(".fill");
+
+function showSlide(index) {
+    slides.forEach(s => s.classList.remove("active"));
+    slides[index].classList.add("active");
+}
+
+function animateBar(index) {
+    fills[index].style.width = "0%";
+    fills[index].style.transition = "none";
+
+    setTimeout(() => {
+        fills[index].style.transition = duration + "ms linear";
+        fills[index].style.width = "100%";
+    }, 50);
+}
+
+function startStory() {
+    showSlide(current);
+    animateBar(current);
+
+    setInterval(() => {
+        if (current < slides.length - 1) {
+        current++;
+        showSlide(current);
+        animateBar(current);
+        }
+    }, duration);
+}
+
+function startExperience() {
+    document.getElementById("intro").style.display = "none";
+
+    const music = document.getElementById("music");
+    music.volume = 0.5;
+    music.play().catch(() => {});
+
+    startStory();
+}
+
+// disable scroll (extra safety)
+document.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+}, { passive: false });
+</script>
+
+</body>
+</html>
